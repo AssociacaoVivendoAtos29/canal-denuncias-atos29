@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canal de Denúncias — Associação Vivendo Atos 29</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    background: #f5f5f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .logo-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid #e0e0d8;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .logo-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #1D9E75;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo-circle svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .org-name { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+  .org-sub { font-size: 12px; color: #666; margin-top: 1px; }
+  .prog-wrap { margin-bottom: 1.5rem; }
+  .prog-labels { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .prog-label { font-size: 11px; color: #888; }
+  .prog-label.active { color: #1D9E75; font-weight: 700; }
+  .prog-bar { height: 5px; background: #e0e0d8; border-radius: 3px; overflow: hidden; }
+  .prog-fill { height: 100%; background: #1D9E75; border-radius: 3px; transition: width 0.4s ease; }
+  .card {
+    background: #fff;
+    border: 1px solid #e0e0d8;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+  }
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #1D9E75;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-title { font-size: 17px; font-weight: 700; color: #1a1a1a; }
+  .step-hint { font-size: 13px; color: #666; margin-bottom: 1.25rem; line-height: 1.5; }
+  .flow-list { list-style: none; }
+  .flow-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0ea;
+  }
+  .flow-item:last-child { border-bottom: none; }
+  .flow-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #e0e0d8;
+    background: #fafaf7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .flow-icon svg { width: 16px; height: 16px; fill: none; stroke: #555; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .flow-text strong { font-size: 13px; font-weight: 700; color: #1a1a1a; display: block; margin-bottom: 2px; }
+  .flow-text span { font-size: 12px; color: #555; line-height: 1.5; }
+  .alert {
+    border-left: 3px solid #0F6E56;
+    background: #eaf7f1;
+    border-radius: 0 8px 8px 0;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+    font-size: 13px;
+    color: #085041;
+    line-height: 1.5;
+  }
+  .alert.warn {
+    border-left-color: #BA7517;
+    background: #fef6e7;
+    color: #633806;
+  }
+  .checks-block { margin-top: 1.25rem; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0ea;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type=checkbox] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    accent-color: #1D9E75;
+    cursor: pointer;
+  }
+  .check-item label {
+    font-size: 13px;
+    color: #1a1a1a;
+    cursor: pointer;
+    line-height: 1.5;
+  }
+  .radio-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+  .radio-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #e0e0d8;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .radio-item:hover { border-color: #1D9E75; background: #f5fdf9; }
+  .radio-item.selected { border-color: #1D9E75; background: #eaf7f1; }
+  .radio-item input[type=radio] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    accent-color: #1D9E75;
+    cursor: pointer;
+  }
+  .radio-label { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+  .radio-sub { font-size: 12px; color: #666; margin-top: 2px; line-height: 1.4; }
+  .field-wrap { margin-bottom: 1.25rem; }
+  .field-wrap:last-child { margin-bottom: 0; }
+  label.field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+  }
+  .required { color: #c0392b; margin-left: 2px; }
+  input[type=text], input[type=email], textarea, select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type=text]:focus, input[type=email]:focus, textarea:focus {
+    border-color: #1D9E75;
+    box-shadow: 0 0 0 3px rgba(29,158,117,0.1);
+  }
+  textarea { min-height: 100px; resize: vertical; line-height: 1.5; }
+  .field-hint { font-size: 11px; color: #888; margin-top: 5px; line-height: 1.4; }
+  .err-msg { font-size: 12px; color: #c0392b; margin-top: 5px; display: none; }
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 12px 24px;
+    background: #1D9E75;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+    text-align: center;
+  }
+  .btn-primary:hover { background: #0F6E56; }
+  .btn-primary:disabled { background: #aaa; cursor: not-allowed; }
+  .btn-sec {
+    display: block;
+    width: 100%;
+    padding: 11px 24px;
+    background: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+    text-align: center;
+  }
+  .btn-sec:hover { background: #f5f5f0; }
+  .nav-row { display: flex; gap: 10px; margin-top: 0.5rem; }
+  .nav-row .btn-primary, .nav-row .btn-sec { flex: 1; }
+  .terms-box {
+    background: #fafaf7;
+    border: 1px solid #e0e0d8;
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 240px;
+    overflow-y: auto;
+    margin: 0.75rem 0;
+  }
+  .terms-box p { font-size: 12px; color: #444; line-height: 1.6; margin-bottom: 0.5rem; }
+  .terms-box p:last-child { margin-bottom: 0; }
+  .terms-box strong { color: #1a1a1a; }
+  .resumo-row {
+    display: flex;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0ea;
+    align-items: flex-start;
+  }
+  .resumo-row:last-child { border-bottom: none; }
+  .resumo-label { font-size: 12px; color: #888; min-width: 130px; flex-shrink: 0; padding-top: 1px; }
+  .resumo-value { font-size: 13px; color: #1a1a1a; line-height: 1.5; }
+  .section-divider {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+    margin: 1.25rem 0 0.75rem;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #f0f0ea;
+  }
+  .success-wrap { text-align: center; padding: 2rem 1rem; }
+  .success-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: #eaf7f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+  }
+  .success-icon svg { width: 32px; height: 32px; fill: none; stroke: #0F6E56; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .success-wrap h2 { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 0.5rem; }
+  .success-wrap .lead { font-size: 14px; color: #555; line-height: 1.6; }
+  .proto-num {
+    display: inline-block;
+    font-family: 'Courier New', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0F6E56;
+    background: #eaf7f1;
+    border: 1px solid #9FE1CB;
+    border-radius: 8px;
+    padding: 8px 20px;
+    margin: 1.25rem 0 0.25rem;
+    letter-spacing: 1px;
+  }
+  .proto-hint { font-size: 12px; color: #888; margin-bottom: 1.5rem; }
+  .next-steps { text-align: left; margin-top: 1.25rem; }
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0d8;
+  }
+  @media (max-width: 480px) {
+    body { padding: 1rem 0.75rem; }
+    .card { padding: 1.25rem; }
+    .nav-row { flex-direction: column-reverse; }
+  }
+  @media print {
+    body { background: #fff; }
+    .btn-primary, .btn-sec, .nav-row { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Logo -->
+  <div class="logo-bar">
+    <div class="logo-circle">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div>
+      <div class="org-name">Associação Vivendo Atos 29</div>
+      <div class="org-sub">Canal oficial de denúncias — uso interno exclusivo</div>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="prog-wrap">
+    <div class="prog-labels">
+      <span class="prog-label active" id="pl1">1. Fluxo</span>
+      <span class="prog-label" id="pl2">2. Identificação</span>
+      <span class="prog-label" id="pl3">3. Fato</span>
+      <span class="prog-label" id="pl4">4. Relato</span>
+      <span class="prog-label" id="pl5">5. Confirmação</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="prog" style="width:20%"></div></div>
+  </div>
+
+  <!-- STEP 1: Fluxo -->
+  <div id="step1">
+    <div class="card">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div class="step-title">O que acontece quando você faz uma denúncia</div>
+      </div>
+      <p class="step-hint">Leia atentamente todas as etapas antes de prosseguir. Sua concordância com o processo é obrigatória para o envio do formulário.</p>
+
+      <ul class="flow-list">
+        <li class="flow-item">
+          <div class="flow-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="flow-text">
+            <strong>1. Registro da denúncia</strong>
+            <span>Você preenche este formulário. O registro é imediato, com data e hora geradas automaticamente. Ninguém além da Presidência e da Diretoria terá acesso ao conteúdo.</span>
+          </div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-icon">
+            <svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </div>
+          <div class="flow-text">
+            <strong>2. Sigilo garantido</strong>
+            <span>A coordenação do seu serviço não tem acesso a este canal. Sua identidade é protegida em todas as etapas. Denúncias anônimas são aceitas.</span>
+          </div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-icon">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="flow-text">
+            <strong>3. Abertura do Procedimento Interno de Apuração (PIA)</strong>
+            <span>A Presidência toma ciência em até 48 horas e abre o PIA. Para casos graves (assédio sexual, violência), a abertura é imediata. A coordenação local não participa da investigação.</span>
+          </div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="flow-text">
+            <strong>4. Direito de defesa do denunciado</strong>
+            <span>O funcionário denunciado será formalmente notificado e terá prazo de 3 a 5 dias úteis para apresentar sua defesa por escrito antes de qualquer decisão.</span>
+          </div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="flow-text">
+            <strong>5. Relatório Conclusivo e decisão</strong>
+            <span>A Presidência emite Relatório Conclusivo com decisão fundamentada: procedente, improcedente ou inconclusivo. As medidas vão de advertência à demissão por justa causa, conforme a gravidade.</span>
+          </div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="flow-text">
+            <strong>6. Proteção contra retaliação</strong>
+            <span>Qualquer retaliação a quem denunciou é vedada e sujeita o responsável às mesmas medidas disciplinares do protocolo, inclusive demissão por justa causa.</span>
+          </div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+          </div>
+          <div class="flow-text">
+            <strong>7. Arquivamento sigiloso</strong>
+            <span>Todo o dossiê fica arquivado por no mínimo 5 anos em pasta de acesso restrito à Diretoria. Denúncias de má-fé também ficam documentadas e podem embasar medidas disciplinares contra o denunciante.</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="alert warn" style="margin-top: 1.25rem;">
+        <strong>⚠ Uso responsável:</strong> Este canal destina-se a relatos verídicos. O uso para prejudicar deliberadamente um colega sem fundamento configura conduta passível de medida disciplinar, podendo culminar em demissão por justa causa.
+      </div>
+
+      <div class="section-divider">Confirmações obrigatórias</div>
+      <div class="checks-block">
+        <div class="check-item">
+          <input type="checkbox" id="c1">
+          <label for="c1">Entendi que a denúncia será recebida exclusivamente pela Presidência/Diretoria, sem acesso da coordenação do serviço onde trabalho.</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="c2">
+          <label for="c2">Entendi que o funcionário denunciado terá direito de apresentar sua defesa por escrito antes de qualquer decisão.</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="c3">
+          <label for="c3">Estou ciente de que denúncias de má-fé podem resultar em medidas disciplinares contra mim, inclusive demissão por justa causa.</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="c4">
+          <label for="c4">Confirmo que os fatos que vou relatar são verdadeiros e de meu conhecimento direto ou indireto.</label>
+        </div>
+      </div>
+      <p class="err-msg" id="err-checks">Você precisa marcar todas as confirmações para prosseguir.</p>
+      <button class="btn-primary" style="margin-top: 1.25rem;" onclick="goStep2()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Identificação -->
+  <div id="step2" style="display:none">
+    <div class="card">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div class="step-title">Identificação</div>
+      </div>
+      <p class="step-hint">Você pode enviar de forma anônima. Se se identificar, isso pode facilitar a apuração e permitir que a Diretoria entre em contato para complementações — mas não é obrigatório.</p>
+
+      <div class="radio-group" id="anon-group">
+        <div class="radio-item" id="ri-anon" onclick="selectAnon('anonimo')">
+          <input type="radio" name="anon" id="r-anon" value="anonimo">
+          <div>
+            <div class="radio-label">Prefiro não me identificar (anônimo)</div>
+            <div class="radio-sub">A denúncia será processada normalmente. Não será possível entrar em contato para complementações.</div>
+          </div>
+        </div>
+        <div class="radio-item" id="ri-ident" onclick="selectAnon('identificado')">
+          <input type="radio" name="anon" id="r-ident" value="identificado">
+          <div>
+            <div class="radio-label">Prefiro me identificar</div>
+            <div class="radio-sub">Seus dados ficam restritos à Presidência/Diretoria. Podem facilitar a apuração.</div>
+          </div>
+        </div>
+      </div>
+      <p class="err-msg" id="err-anon">Selecione uma das opções acima.</p>
+
+      <div id="ident-fields" style="display:none">
+        <div class="section-divider">Seus dados</div>
+        <div class="field-wrap">
+          <label class="field-label" for="nome">Nome completo <span class="required">*</span></label>
+          <input type="text" id="nome" placeholder="Seu nome completo">
+          <p class="err-msg" id="err-nome">Informe seu nome.</p>
+        </div>
+        <div class="field-wrap">
+          <label class="field-label" for="cargo">Cargo / função</label>
+          <input type="text" id="cargo" placeholder="Ex: cuidador, educador social, assistente social...">
+        </div>
+        <div class="field-wrap">
+          <label class="field-label" for="unidade-denunciante">Unidade / serviço onde você atua</label>
+          <input type="text" id="unidade-denunciante" placeholder="Ex: Residência Inclusiva Vasco da Gama">
+        </div>
+        <div class="field-wrap">
+          <label class="field-label" for="email">E-mail para retorno (opcional)</label>
+          <input type="email" id="email" placeholder="seu@email.com">
+          <p class="field-hint">Usado apenas pela Diretoria para informar o encerramento do caso. Não obrigatório.</p>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-sec" onclick="goStep(1)">← Voltar</button>
+      <button class="btn-primary" onclick="goStep3()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Fato -->
+  <div id="step3" style="display:none">
+    <div class="card">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <div class="step-title">Sobre o fato denunciado</div>
+      </div>
+      <p class="step-hint">Informe os dados básicos do ocorrido. Todos os campos marcados com <span class="required">*</span> são obrigatórios.</p>
+
+      <div class="field-wrap">
+        <label class="field-label">Natureza da denúncia <span class="required">*</span></label>
+        <div class="radio-group" id="nat-group">
+          <div class="radio-item" onclick="selectNat(this,'assedio-moral')">
+            <input type="radio" name="nat" value="assedio-moral">
+            <div>
+              <div class="radio-label">Assédio moral</div>
+              <div class="radio-sub">Humilhação, coerção, pressão psicológica abusiva, exposição vexatória reiterada.</div>
+            </div>
+          </div>
+          <div class="radio-item" onclick="selectNat(this,'assedio-sexual')">
+            <input type="radio" name="nat" value="assedio-sexual">
+            <div>
+              <div class="radio-label">Assédio sexual</div>
+              <div class="radio-sub">Insinuações, toques não consentidos, propostas ou comentários de conotação sexual.</div>
+            </div>
+          </div>
+          <div class="radio-item" onclick="selectNat(this,'violencia')">
+            <input type="radio" name="nat" value="violencia">
+            <div>
+              <div class="radio-label">Violência física ou verbal</div>
+              <div class="radio-sub">Agressão física, ameaças, xingamentos graves, intimidação.</div>
+            </div>
+          </div>
+          <div class="radio-item" onclick="selectNat(this,'discriminacao')">
+            <input type="radio" name="nat" value="discriminacao">
+            <div>
+              <div class="radio-label">Discriminação</div>
+              <div class="radio-sub">Por gênero, raça, etnia, religião, orientação sexual, deficiência ou outra característica.</div>
+            </div>
+          </div>
+          <div class="radio-item" onclick="selectNat(this,'conduta')">
+            <input type="radio" name="nat" value="conduta">
+            <div>
+              <div class="radio-label">Desvio de conduta / descumprimento de normas</div>
+              <div class="radio-sub">Comportamento inadequado recorrente, negligência funcional, conflito de interesse.</div>
+            </div>
+          </div>
+          <div class="radio-item" onclick="selectNat(this,'outro')">
+            <input type="radio" name="nat" value="outro">
+            <div>
+              <div class="radio-label">Outro</div>
+              <div class="radio-sub">Situação não enquadrada nas categorias acima — descreva no relato.</div>
+            </div>
+          </div>
+        </div>
+        <p class="err-msg" id="err-nat">Selecione a natureza da denúncia.</p>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label" for="denunciado">Nome do(s) funcionário(s) denunciado(s) <span class="required">*</span></label>
+        <input type="text" id="denunciado" placeholder="Nome(s) do(s) colega(s)">
+        <p class="field-hint">Se houver mais de um, liste todos. Se não souber o nome completo, descreva o cargo ou a função.</p>
+        <p class="err-msg" id="err-den">Informe o nome ou descrição do funcionário denunciado.</p>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label" for="unid-fato">Unidade / serviço onde o fato ocorreu <span class="required">*</span></label>
+        <input type="text" id="unid-fato" placeholder="Ex: Residência Inclusiva, sede administrativa...">
+        <p class="err-msg" id="err-unid">Informe o local do fato.</p>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label" for="data-fato">Data aproximada do fato <span class="required">*</span></label>
+        <input type="text" id="data-fato" placeholder="Ex: 10/06/2025, ou 'ao longo de junho de 2025'">
+        <p class="field-hint">Não precisa ser exata. Período aproximado é suficiente.</p>
+        <p class="err-msg" id="err-data">Informe a data ou período aproximado.</p>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-sec" onclick="goStep(2)">← Voltar</button>
+      <button class="btn-primary" onclick="goStep4()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Relato -->
+  <div id="step4" style="display:none">
+    <div class="card">
+      <div class="step-header">
+        <div class="step-num">4</div>
+        <div class="step-title">Relato detalhado</div>
+      </div>
+      <p class="step-hint">Descreva o que aconteceu com o máximo de detalhes possível: o que foi dito ou feito, onde, na presença de quem, e com que frequência, se recorrente.</p>
+
+      <div class="field-wrap">
+        <label class="field-label" for="relato">Descrição dos fatos <span class="required">*</span></label>
+        <textarea id="relato" style="min-height: 150px;" placeholder="Descreva os fatos de forma objetiva. Inclua datas, locais, o que foi dito ou feito, e qualquer outro detalhe relevante."></textarea>
+        <p class="field-hint">Não há limite de caracteres. Quanto mais detalhado, mais eficaz a apuração.</p>
+        <p class="err-msg" id="err-relato">O relato detalhado é obrigatório.</p>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label" for="testemunhas">Há testemunhas? (opcional)</label>
+        <input type="text" id="testemunhas" placeholder="Nome(s) de quem presenciou, se houver">
+        <p class="field-hint">Se não souber os nomes, descreva quem estava presente (ex: "cuidadores do plantão da manhã do dia X").</p>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label">Há evidências ou documentos que possam comprovar os fatos?</label>
+        <div class="radio-group" style="margin-top: 6px;">
+          <div class="radio-item" id="ev-sim" onclick="selectEv('sim')">
+            <input type="radio" name="ev" value="sim">
+            <div class="radio-label">Sim — descreva abaixo</div>
+          </div>
+          <div class="radio-item" id="ev-nao" onclick="selectEv('nao')">
+            <input type="radio" name="ev" value="nao">
+            <div class="radio-label">Não</div>
+          </div>
+        </div>
+        <div id="ev-desc" style="display:none; margin-top: 0.75rem;">
+          <textarea id="evidencia" style="min-height: 80px;" placeholder="Descreva que tipo de evidência existe (mensagens, imagens, câmeras, documentos, registros...) e como ela pode ser acessada ou obtida."></textarea>
+        </div>
+      </div>
+
+      <div class="field-wrap">
+        <label class="field-label" for="info-adicional">Informações adicionais que considera relevantes (opcional)</label>
+        <textarea id="info-adicional" style="min-height: 80px;" placeholder="Histórico, contexto, ocorrências anteriores similares, tentativas de resolução informal já feitas..."></textarea>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-sec" onclick="goStep(3)">← Voltar</button>
+      <button class="btn-primary" onclick="goStep5()">Revisar e confirmar →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: Confirmação -->
+  <div id="step5" style="display:none">
+    <div class="card">
+      <div class="step-header">
+        <div class="step-num">5</div>
+        <div class="step-title">Revisão e aceite final</div>
+      </div>
+      <p class="step-hint">Revise seu registro abaixo. Após o envio, o conteúdo não pode ser alterado.</p>
+
+      <div class="section-divider">Resumo do seu registro</div>
+      <div id="resumo-content"></div>
+
+      <div class="section-divider" style="margin-top: 1.5rem;">Termo de ciência e concordância</div>
+      <div class="terms-box">
+        <p><strong>Ao enviar este formulário, declaro que:</strong></p>
+        <p>1. Li e compreendi o Protocolo de Apuração de Denúncias da Associação Vivendo Atos 29, incluindo todas as etapas do fluxo descrito neste formulário.</p>
+        <p>2. Os fatos relatados são verídicos e de meu conhecimento direto ou indireto. Estou ciente de que denúncias de má-fé são passíveis de medida disciplinar, podendo culminar em demissão por justa causa.</p>
+        <p>3. Compreendo que o funcionário denunciado será formalmente notificado e terá prazo para apresentar sua defesa por escrito antes de qualquer decisão da Diretoria.</p>
+        <p>4. Compreendo que a decisão final cabe exclusivamente à Presidência e à Diretoria da Associação Vivendo Atos 29, com base no Relatório Conclusivo do Procedimento Interno de Apuração.</p>
+        <p>5. Estou ciente de que toda a documentação gerada neste processo será arquivada por no mínimo 5 (cinco) anos em pasta de acesso restrito à Presidência e à Diretoria.</p>
+        <p>6. Ao me identificar, declaro que meus dados pessoais ficam restritos à Presidência e à Diretoria, não sendo compartilhados com a coordenação do serviço ou com o funcionário denunciado, salvo por ordem judicial.</p>
+      </div>
+
+      <div class="check-item" style="padding: 10px 0 0;">
+        <input type="checkbox" id="termo-final">
+        <label for="termo-final" style="font-size: 13px; font-weight: 700;">Li, compreendi e concordo com todos os termos acima.</label>
+      </div>
+      <p class="err-msg" id="err-termo">É necessário aceitar os termos para enviar a denúncia.</p>
+      <button class="btn-primary" style="margin-top: 1.25rem;" onclick="enviar()">Enviar denúncia</button>
+    </div>
+    <div class="nav-row" style="margin-top: 0.5rem;">
+      <button class="btn-sec" onclick="goStep(4)">← Voltar e editar</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="step-success" style="display:none">
+    <div class="card">
+      <div class="success-wrap">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2>Denúncia registrada com sucesso</h2>
+        <p class="lead">Seu registro foi recebido pela Presidência/Diretoria da Associação Vivendo Atos 29.</p>
+        <div class="proto-num" id="proto-num"></div>
+        <p class="proto-hint">Guarde este número de protocolo para referência futura.</p>
+
+        <div class="alert" style="text-align: left;">
+          <strong>Próximos passos:</strong> A Presidência tomará ciência do seu registro em até 48 horas. Para casos de assédio sexual ou violência, a abertura do Procedimento Interno de Apuração é imediata. Se você informou um e-mail, receberá comunicação ao encerramento do caso.
+        </div>
+
+        <div class="alert warn" style="margin-top: 0.75rem; text-align: left;">
+          <strong>Situação de risco imediato?</strong> Em caso de risco imediato à sua integridade, entre em contato diretamente com a Diretoria pelo canal institucional de emergência.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Associação Vivendo Atos 29 — CNPJ 36.751.059/0001-69 — Canal de uso interno exclusivo<br>
+    As informações enviadas são sigilosas e de acesso restrito à Presidência e à Diretoria.
+  </div>
+</div>
+
+<script>
+var anonChoice = null;
+var natChoice = null;
+var evChoice = null;
+
+var natLabels = {
+  'assedio-moral': 'Assédio moral',
+  'assedio-sexual': 'Assédio sexual',
+  'violencia': 'Violência física ou verbal',
+  'discriminacao': 'Discriminação',
+  'conduta': 'Desvio de conduta / descumprimento de normas',
+  'outro': 'Outro'
+};
+
+function goStep(n) {
+  for (var i = 1; i <= 5; i++) {
+    document.getElementById('step' + i).style.display = 'none';
+  }
+  document.getElementById('step-success').style.display = 'none';
+  document.getElementById('step' + n).style.display = 'block';
+
+  var pcts = { 1: 20, 2: 40, 3: 60, 4: 78, 5: 92 };
+  document.getElementById('prog').style.width = (pcts[n] || 20) + '%';
+
+  var labels = ['pl1','pl2','pl3','pl4','pl5'];
+  labels.forEach(function(id, idx) {
+    var el = document.getElementById(id);
+    el.className = 'prog-label' + (idx + 1 === n ? ' active' : '');
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goStep2() {
+  var ids = ['c1','c2','c3','c4'];
+  var allChecked = ids.every(function(id) { return document.getElementById(id).checked; });
+  if (!allChecked) {
+    document.getElementById('err-checks').style.display = 'block';
+    return;
+  }
+  document.getElementById('err-checks').style.display = 'none';
+  goStep(2);
+}
+
+function goStep3() {
+  if (!anonChoice) {
+    document.getElementById('err-anon').style.display = 'block';
+    return;
+  }
+  if (anonChoice === 'identificado') {
+    var nome = document.getElementById('nome').value.trim();
+    if (!nome) {
+      document.getElementById('err-nome').style.display = 'block';
+      document.getElementById('nome').focus();
+      return;
+    }
+    document.getElementById('err-nome').style.display = 'none';
+  }
+  document.getElementById('err-anon').style.display = 'none';
+  goStep(3);
+}
+
+function goStep4() {
+  var ok = true;
+  if (!natChoice) {
+    document.getElementById('err-nat').style.display = 'block';
+    ok = false;
+  } else {
+    document.getElementById('err-nat').style.display = 'none';
+  }
+  if (!document.getElementById('denunciado').value.trim()) {
+    document.getElementById('err-den').style.display = 'block';
+    ok = false;
+  } else {
+    document.getElementById('err-den').style.display = 'none';
+  }
+  if (!document.getElementById('unid-fato').value.trim()) {
+    document.getElementById('err-unid').style.display = 'block';
+    ok = false;
+  } else {
+    document.getElementById('err-unid').style.display = 'none';
+  }
+  if (!document.getElementById('data-fato').value.trim()) {
+    document.getElementById('err-data').style.display = 'block';
+    ok = false;
+  } else {
+    document.getElementById('err-data').style.display = 'none';
+  }
+  if (ok) goStep(4);
+}
+
+function goStep5() {
+  var relato = document.getElementById('relato').value.trim();
+  if (!relato) {
+    document.getElementById('err-relato').style.display = 'block';
+    return;
+  }
+  document.getElementById('err-relato').style.display = 'none';
+  buildResumo();
+  goStep(5);
+}
+
+function selectAnon(val) {
+  anonChoice = val;
+  document.getElementById('ri-anon').classList.toggle('selected', val === 'anonimo');
+  document.getElementById('ri-ident').classList.toggle('selected', val === 'identificado');
+  document.getElementById('r-' + (val === 'anonimo' ? 'anon' : 'ident')).checked = true;
+  document.getElementById('ident-fields').style.display = val === 'identificado' ? 'block' : 'none';
+  document.getElementById('err-anon').style.display = 'none';
+}
+
+function selectNat(el, val) {
+  natChoice = val;
+  document.querySelectorAll('#nat-group .radio-item').forEach(function(e) { e.classList.remove('selected'); });
+  el.classList.add('selected');
+  document.getElementById('err-nat').style.display = 'none';
+}
+
+function selectEv(val) {
+  evChoice = val;
+  document.getElementById('ev-sim').classList.toggle('selected', val === 'sim');
+  document.getElementById('ev-nao').classList.toggle('selected', val === 'nao');
+  document.getElementById('ev-desc').style.display = val === 'sim' ? 'block' : 'none';
+}
+
+function buildResumo() {
+  var nome = anonChoice === 'identificado'
+    ? (document.getElementById('nome').value.trim() || '—')
+    : 'Anônimo';
+
+  var rows = [
+    ['Denunciante', nome],
+    ['Natureza', natLabels[natChoice] || '—'],
+    ['Denunciado(s)', document.getElementById('denunciado').value.trim() || '—'],
+    ['Local do fato', document.getElementById('unid-fato').value.trim() || '—'],
+    ['Data aproximada', document.getElementById('data-fato').value.trim() || '—'],
+    ['Testemunhas', document.getElementById('testemunhas').value.trim() || 'Nenhuma informada'],
+    ['Evidências', evChoice === 'sim' ? 'Sim (detalhado no relato)' : evChoice === 'nao' ? 'Não' : 'Não informado']
+  ];
+
+  var relato = document.getElementById('relato').value.trim();
+  var resumoRelato = relato.length > 200 ? relato.substring(0, 200) + '...' : relato;
+  rows.push(['Relato (resumo)', resumoRelato]);
+
+  var html = '';
+  rows.forEach(function(r) {
+    html += '<div class="resumo-row"><span class="resumo-label">' + r[0] + '</span><span class="resumo-value">' + escHtml(r[1]) + '</span></div>';
+  });
+
+  document.getElementById('resumo-content').innerHTML = html;
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function gerarProtocolo() {
+  var d = new Date();
+  var ano = d.getFullYear();
+  var mes = String(d.getMonth() + 1).padStart(2, '0');
+  var dia = String(d.getDate()).padStart(2, '0');
+  var rand = String(Math.floor(Math.random() * 9000) + 1000);
+  return 'DEN-' + ano + '-' + mes + dia + '-' + rand;
+}
+
+var GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSdm5a4iVZuEoXQSmpsVO399oU0KRyT9HdM9OECG0qxpqHHk_g/formResponse';
+
+var ENTRY_IDS = {
+  protocolo: 'entry.1306901787',
+  dataHora: 'entry.1021173445',
+  denunciante: 'entry.1557793597',
+  cargo: 'entry.1632786336',
+  unidadeDenunciante: 'entry.308077585',
+  email: 'entry.2018814431',
+  natureza: 'entry.348601565',
+  denunciado: 'entry.1495394815',
+  localFato: 'entry.439052659',
+  dataFato: 'entry.138789572',
+  relato: 'entry.559297838',
+  testemunhas: 'entry.680450970',
+  evidencias: 'entry.1910512078',
+  infoAdicional: 'entry.453720411',
+  termoAceito: 'entry.1791829010',
+  confirmacoes: 'entry.1221913083'
+};
+
+function formatarDataHora() {
+  var d = new Date();
+  var pad = function(n) { return String(n).padStart(2, '0'); };
+  return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function montarEvidenciasTexto() {
+  if (evChoice === 'sim') {
+    var desc = document.getElementById('evidencia').value.trim();
+    return 'Sim. ' + (desc || '(sem descrição adicional)');
+  }
+  if (evChoice === 'nao') return 'Não';
+  return 'Não informado';
+}
+
+function montarConfirmacoesTexto() {
+  return '1) Ciência de que a denúncia vai à Presidência/Diretoria, sem acesso da coordenação. 2) Ciência do direito de defesa do denunciado. 3) Ciência de que denúncias de má-fé geram medidas disciplinares. 4) Confirmação de que os fatos relatados são verídicos.';
+}
+
+function enviarParaGoogleForms() {
+  var nome = anonChoice === 'identificado' ? document.getElementById('nome').value.trim() : 'Anônimo';
+  var cargo = anonChoice === 'identificado' ? document.getElementById('cargo').value.trim() : '';
+  var unidadeDen = anonChoice === 'identificado' ? document.getElementById('unidade-denunciante').value.trim() : '';
+  var email = anonChoice === 'identificado' ? document.getElementById('email').value.trim() : '';
+
+  var formData = new FormData();
+  formData.append(ENTRY_IDS.protocolo, document.getElementById('proto-num').textContent);
+  formData.append(ENTRY_IDS.dataHora, formatarDataHora());
+  formData.append(ENTRY_IDS.denunciante, nome);
+  formData.append(ENTRY_IDS.cargo, cargo);
+  formData.append(ENTRY_IDS.unidadeDenunciante, unidadeDen);
+  formData.append(ENTRY_IDS.email, email);
+  formData.append(ENTRY_IDS.natureza, natLabels[natChoice] || '');
+  formData.append(ENTRY_IDS.denunciado, document.getElementById('denunciado').value.trim());
+  formData.append(ENTRY_IDS.localFato, document.getElementById('unid-fato').value.trim());
+  formData.append(ENTRY_IDS.dataFato, document.getElementById('data-fato').value.trim());
+  formData.append(ENTRY_IDS.relato, document.getElementById('relato').value.trim());
+  formData.append(ENTRY_IDS.testemunhas, document.getElementById('testemunhas').value.trim() || 'Nenhuma informada');
+  formData.append(ENTRY_IDS.evidencias, montarEvidenciasTexto());
+  formData.append(ENTRY_IDS.infoAdicional, document.getElementById('info-adicional').value.trim());
+  formData.append(ENTRY_IDS.termoAceito, 'Sim — aceito em ' + formatarDataHora());
+  formData.append(ENTRY_IDS.confirmacoes, montarConfirmacoesTexto());
+
+  return fetch(GOOGLE_FORM_ACTION, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: formData
+  });
+}
+
+function enviar() {
+  var termo = document.getElementById('termo-final').checked;
+  if (!termo) {
+    document.getElementById('err-termo').style.display = 'block';
+    return;
+  }
+  document.getElementById('err-termo').style.display = 'none';
+
+  var btn = document.querySelector('#step5 .btn-primary');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  document.getElementById('proto-num').textContent = gerarProtocolo();
+
+  enviarParaGoogleForms()
+    .then(function() {
+      mostrarSucesso();
+    })
+    .catch(function() {
+      mostrarSucesso();
+    });
+}
+
+function mostrarSucesso() {
+  for (var i = 1; i <= 5; i++) {
+    document.getElementById('step' + i).style.display = 'none';
+  }
+  document.getElementById('step-success').style.display = 'block';
+  document.getElementById('prog').style.width = '100%';
+  document.querySelectorAll('.prog-label').forEach(function(el) {
+    el.className = 'prog-label active';
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
